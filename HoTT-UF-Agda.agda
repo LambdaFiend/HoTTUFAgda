@@ -218,3 +218,8 @@ curry f x y = f (x , y)
 _×_ : 𝓤 ̇  → 𝓥 ̇  → 𝓤 ⊔ 𝓥 ̇
 X × Y = Σ x ꞉ X , Y  -- same as Σ (λ (x : X) → Y)
 
+
+
+
+
+
