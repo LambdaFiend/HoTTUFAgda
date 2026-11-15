@@ -216,10 +216,64 @@ curry : {X : 𝓤 ̇ } {Y : X → 𝓥 ̇ } {A : Σ Y → 𝓦 ̇ }
 curry f x y = f (x , y)
 
 _×_ : 𝓤 ̇  → 𝓥 ̇  → 𝓤 ⊔ 𝓥 ̇
-X × Y = Σ x ꞉ X , Y  -- same as Σ (λ (x : X) → Y)
+X × Y = Σ x ꞉ X , Y
 
+Π : {X : 𝓤 ̇ } (A : X → 𝓥 ̇ ) → 𝓤 ⊔ 𝓥 ̇
+Π {𝓤} {𝓥} {X} A = (x : X) → A x
 
+-Π : {𝓤 𝓥 : Universe} (X : 𝓤 ̇ ) (Y : X → 𝓥 ̇ ) → 𝓤 ⊔ 𝓥 ̇
+-Π X Y = Π Y
 
+syntax -Π A (λ x → B) = Π x ꞉ A , B
 
+id : {X : 𝓤 ̇ } → X → X
+id x = x
 
+𝑖𝑑 : (X : 𝓤 ̇ ) → X → X
+𝑖𝑑 X = id
 
+_∘_ : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } {Z : Y → 𝓦 ̇ }
+    → ((y : Y) → Z y)
+    → (f : X → Y)
+    → (x : X) → Z (f x)
+g ∘ f = λ x → g (f x)
+
+domain : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } → (X → Y) → 𝓤 ̇
+domain {𝓤} {𝓥} {X} {Y} f = X
+
+codomain : {X : 𝓤 ̇ } {Y : 𝓥 ̇ } → (X → Y) → 𝓥 ̇
+codomain {𝓤} {𝓥} {X} {Y} f = Y
+
+type-of : {X : 𝓤 ̇ } → X → 𝓤 ̇
+type-of {𝓤} {X} x = X
+
+data Id {𝓤} (X : 𝓤 ̇ ) : X → X → 𝓤 ̇  where
+  refl : (x : X) → Id X x x
+
+_＝_ : {X : 𝓤 ̇ } (x y : X) → 𝓤 ̇
+x ＝ y = Id _ x y
+
+𝕁 : (X : 𝓤 ̇ ) (A : (x y : X) → x ＝ y → 𝓥 ̇ )
+  → ((x : X) → A x x (refl x))
+  → (x y : X) → (p : x ＝ y) → A x y p
+𝕁 X A f x x (refl x) = f x
+
+ℍ : {X : 𝓤 ̇ } (x : X) (B : (y : X) → x ＝ y → 𝓥 ̇ )
+  → B x (refl x)
+  → (y : X) (p : x ＝ y) → B y p
+ℍ x B b x (refl x) = b
+
+𝕁' : (X : 𝓤 ̇ ) (A : (x y : X) → x ＝ y → 𝓥 ̇ )
+   → ((x : X) → A x x (refl x))
+   → (x y : X) (p : x ＝ y) → A x y p
+𝕁' X A f x = ℍ x (A x) (f x)
+
+𝕁s-agreement : (X : 𝓤 ̇ ) (A : (x y : X) → x ＝ y → 𝓥 ̇ )
+             → (f : (x : X) → A x x (refl x)) (x y : X) (p : x ＝ y)
+             → 𝕁 X A f x y p ＝ 𝕁' X A f x y p
+𝕁s-agreement X A f x x (refl x) = refl (f x)
+
+-- ℍ' : {X : 𝓤 ̇ } (x : X) (B : (y : X) → x ＝ y → 𝓥 ̇ )
+--    → B x (refl x)
+--    → (y : X) (p : x ＝ y) → B y p
+-- ℍ' {𝓤} {𝓥} {X} x B b y p = 𝕁 X (λ x₁ → {!B!}) (λ x₁ → {!!}) x y p
