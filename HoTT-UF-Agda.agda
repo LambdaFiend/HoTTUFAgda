@@ -277,5 +277,3 @@ x ＝ y = Id _ x y
 --    → B x (refl x)
 --    → (y : X) (p : x ＝ y) → B y p
 -- ℍ' {𝓤} {𝓥} {X} x B b y p = 𝕁 X (λ x₁ → {!B!}) (λ x₁ → {!!}) x y p
-
---
